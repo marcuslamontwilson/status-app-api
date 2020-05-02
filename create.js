@@ -1,24 +1,21 @@
-import uuid from "uuid";
-import * as dynamoDbLib from "./libs/dynamodb-lib";
-import { success, failure } from "./libs/response-lib";
+import * as uuid from "uuid";
+import handler from "./libs/handler-lib";
+import dynamoDb from "./libs/dynamodb-lib";
 
-export async function main(event, context) {
+export const main = handler(async (event, context) => {
   const data = JSON.parse(event.body);
   const params = {
     TableName: process.env.tableName,
     Item: {
-      userID: event.requestContext.identity.cognitoIdentityId,
-      reportID: uuid.v1(),
+      userId: event.requestContext.identity.cognitoIdentityId,
+      reportId: uuid.v1(),
       content: data.content,
       attachment: data.attachment,
       createdAt: Date.now()
     }
   };
 
-  try {
-    await dynamoDbLib.call("put", params);
-    return success(params.Item);
-  } catch (e) {
-    return failure({ status: false });
-  }
-}
+  await dynamoDb.put(params);
+
+  return params.Item;
+});
