@@ -11,8 +11,8 @@ plugins:
   - serverless-dotenv-plugin # Load .env as environment variables
 
 custom:
-    stage: ${opt:stage, self:provider.stage}
-    tableName: ${self:custom.stage}-reports
+  stage: ${opt:stage, self:provider.stage}
+  tableName: ${self:custom.stage}-reports
 
 provider:
   name: aws
